@@ -34,5 +34,5 @@ jobs:
         echo $image, $environment
         aws ecs list-clusters
       env:
-        image: '${{ inputs.image }}'
-        environment: '${{ inputs.environment }}'
+        image: '${{ github.event.inputs.image }}'
+        environment: '${{ github.event.inputs.environment }}'
