@@ -8,7 +8,7 @@ on:
     types: [ opened, reopened, edited ]
     
 jobs:
-  test-api:
+  build:
     strategy:
       matrix:
         node-version: [18.x]
@@ -21,6 +21,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: api/package-lock.json
+    - working-directory: api
+      run: npm install
     - working-directory: api
       run: npm ci
     - working-directory: api
