@@ -40,7 +40,7 @@ jobs:
     - name: aws cli test
       run: |
         echo $image, $environment
-        aws ecs list-clusters
+        aws ecs update-service --cluster Cellborg-beta-Api-Cluster --service Cellborg-beta-Api --force-new-deployment
       env:
         image: '${{ github.event.inputs.image }}'
         environment: '${{ github.event.inputs.environment }}'
