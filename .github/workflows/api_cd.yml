@@ -18,6 +18,15 @@ on:
         default: 'beta'
     
 jobs:
+  log-the-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "image: $image"
+          echo "environment: $environment"
+        env:
+          LEVEL: ${{ inputs.image }}
+          TAGS: ${{ inputs.environment }}
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -36,3 +45,4 @@ jobs:
       env:
         image: '${{ github.event.inputs.image }}'
         environment: '${{ github.event.inputs.environment }}'
+
