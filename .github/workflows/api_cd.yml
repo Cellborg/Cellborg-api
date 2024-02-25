@@ -1,11 +1,6 @@
 name: Cellborg API CD
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-    types: [ opened, reopened, edited ]
   workflow_dispatch:
     inputs:
       image:
@@ -16,6 +11,11 @@ on:
         description: 'environment to deploy'
         required: true
         default: 'beta'
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    types: [ opened, reopened, edited ]
     
 jobs:
   log-the-inputs:
@@ -37,7 +37,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: "us-west-2"
         
-
     - name: aws cli test
       run: |
         echo $image, $environment
