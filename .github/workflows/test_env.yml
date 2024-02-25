@@ -3,33 +3,22 @@ name: Cellborg test env
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'
+      image:
+        description: 'image_name:tag'
         required: true
-        default: 'warning'
-        type: choice
-        options:
-        - info
-        - warning
-        - debug
-      tags:
-        description: 'Test scenario tags'
-        required: false
-        type: boolean
+        default: 'cellborg-beta-api:latest'
       environment:
-        description: 'Environment to run tests against'
-        type: environment
+        description: 'environment to deploy'
         required: true
+        default: 'beta'
   
 jobs:
   log-the-inputs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "Log level: $LEVEL"
-          echo "Tags: $TAGS"
+          echo "Image: $IMAGE"
           echo "Environment: $ENVIRONMENT"
         env:
-          LEVEL: ${{ inputs.logLevel }}
-          TAGS: ${{ inputs.tags }}
+          IMAGE: ${{ inputs.image }}
           ENVIRONMENT: ${{ inputs.environment }}
