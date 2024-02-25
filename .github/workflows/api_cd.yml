@@ -6,6 +6,16 @@ on:
   pull_request:
     branches: [ "main" ]
     types: [ opened, reopened, edited ]
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'image_name:tag'
+        required: true
+        default: 'cellborg-beta-api:latest'
+      environment:
+        description: 'environment to deploy'
+        required: true
+        default: 'beta'
     
 jobs:
   deploy:
@@ -17,6 +27,12 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: "us-west-2"
+        
+
     - name: aws cli test
       run: |
+        echo $image, $environment
         aws ecs list-clusters
+          env:
+            image: '${{ inputs.image }}'
+            environment: '${{ inputs.environment }}'
