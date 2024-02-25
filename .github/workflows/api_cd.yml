@@ -11,11 +11,11 @@ on:
         description: 'environment to deploy'
         required: true
         default: 'beta'
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-    types: [ opened, reopened, edited ]
+  # push:
+  #   branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
+  #   types: [ opened, reopened, edited ]
     
 jobs:
   log-the-inputs:
