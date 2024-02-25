@@ -22,11 +22,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "image: $image"
-          echo "environment: $environment"
+          echo "Image: $IMAGE"
+          echo "Environment: $ENVIRONMENT"
         env:
-          LEVEL: ${{ inputs.image }}
-          TAGS: ${{ inputs.environment }}
+          IMAGE: ${{ inputs.image }}
+          ENVIRONMENT: ${{ inputs.environment }}
   deploy:
     runs-on: ubuntu-latest
     steps:
