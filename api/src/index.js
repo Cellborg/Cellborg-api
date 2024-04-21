@@ -109,7 +109,7 @@ function isValidUserID(userID) {
 
 app.get('/api/test', (req, res) => {
   console.log(req.ip);
-  return res.status(200).json({ message: "Testing successful! 11-16-2023"});
+  return res.status(200).json({ message: "Testing successful! 04-21-2024"});
 });
 
 app.post('/api/begin', (req, res) => {
