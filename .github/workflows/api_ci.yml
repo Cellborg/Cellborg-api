@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ "main" ]
     types: [ opened, reopened, edited ]
+  workflow_dispatch:
+    inputs:
+      environ:
+        description: 'environment'
+        required: false
     
 jobs:
   # build:
@@ -55,7 +60,7 @@ jobs:
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: cellborg-beta-api
-        IMAGE_TAG: ${{ github.sha }}
+        IMAGE_TAG:  ${{ github.event.inputs.environ == 'beta' && github.event.inputs.environ || github.sha }}
       run: |
         cd api
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
