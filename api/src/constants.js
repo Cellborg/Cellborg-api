@@ -20,7 +20,7 @@ module.exports = {
     US_WEST_2: 'us-west-2',
     QC_CLUSTER: `${AWS_BASE}:cluster/${CLUSTER_NAME}`,
     ANALYSIS_CLUSTER: `${AWS_BASE}:cluster/${ANALYSIS_CLUSTER_NAME}`,
-    QC_TASK_DEFINITION: `${AWS_BASE}:task-definition/${TASK_NAME}:${IS_DEV ? 12 : 21}`,
+    QC_TASK_DEFINITION: `${AWS_BASE}:task-definition/${TASK_NAME}:${IS_DEV ? 12 : 22}`,
     FARGATE: "FARGATE",
     //SUBNET: IS_DEV ? "subnet-0951d410d348bbd0a" : "subnet-027d750688bf8100f",
     SUBNET: IS_DEV ? "subnet-0951d410d348bbd0a" : "subnet-0931846f7727a13a8",
