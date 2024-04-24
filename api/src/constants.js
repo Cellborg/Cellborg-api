@@ -45,7 +45,7 @@ module.exports = {
     envvv: ENV,  
     PORT,
     SERVER,
-    ORIGIN: "*", // maybe different origins for dev and prod
+    ORIGIN: "https://beta.cellborg.bio", // maybe different origins for dev and prod
     SECRET: process.env.JWT_SECRET,
     MONGO_CONNECTION_STRING: process.env.MONGO_CONNECTION_STRING
 };
