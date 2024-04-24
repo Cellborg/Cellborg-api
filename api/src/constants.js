@@ -23,7 +23,7 @@ module.exports = {
     QC_TASK_DEFINITION: `${AWS_BASE}:task-definition/${TASK_NAME}:${IS_DEV ? 12 : 22}`,
     FARGATE: "FARGATE",
     //SUBNET: IS_DEV ? "subnet-0951d410d348bbd0a" : "subnet-027d750688bf8100f",
-    SUBNET: IS_DEV ? "subnet-0951d410d348bbd0a" : "subnet-0931846f7727a13a8",
+    SUBNET: IS_DEV ? "subnet-0951d410d348bbd0a" : "subnet-0ca28d6b41e0d6f5a", 
     ENABLED: "ENABLED",
     QC_CONTAINER_NAME: IS_DEV ? "cellborg_qc_py" : `cellborg-${ENV}-qc_py`,
     CELLBORG_ANALYSIS_PY: IS_DEV ? "cellborg_analysis_py" :  `cellborg-${ENV}-analysis_py`,
