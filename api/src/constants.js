@@ -22,8 +22,8 @@ module.exports = {
     ANALYSIS_CLUSTER: `${AWS_BASE}:cluster/${ANALYSIS_CLUSTER_NAME}`,
     QC_TASK_DEFINITION: `${AWS_BASE}:task-definition/${TASK_NAME}:${IS_DEV ? 12 : 22}`,
     FARGATE: "FARGATE",
-    //SUBNET: IS_DEV ? "subnet-0951d410d348bbd0a" : "subnet-027d750688bf8100f",
-    SUBNET: IS_DEV ? "subnet-0951d410d348bbd0a" : "subnet-0ca28d6b41e0d6f5a", 
+    //TODO: we need to get this subnet dynamically? also why code shall be tied to a subnet.
+    SUBNET: IS_DEV ? "subnet-0951d410d348bbd0a" : "subnet-0ff7168bbb1e17bd9", 
     ENABLED: "ENABLED",
     QC_CONTAINER_NAME: IS_DEV ? "cellborg_qc_py" : `cellborg-${ENV}-qc_py`,
     CELLBORG_ANALYSIS_PY: IS_DEV ? "cellborg_analysis_py" :  `cellborg-${ENV}-analysis_py`,
