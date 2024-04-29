@@ -29,9 +29,11 @@ async function beginQualityControl (req, res) {
     //TODO: add userID once we shift over from email to userID
     const sqsKey = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`;
     try {
-      const qc_sqsUrl = await createSQSQueue(sqsKey);
-      console.log("Beginning QC Task from AWS Fargate");
-      runECSTask(qc_sqsUrl, "QC")
+      const qc_sqsUrl = createSQSQueue(sqsKey);
+      var qc_sqsUrl_v = "https://sqs.us-west-2.amazonaws.com/865984939637/"+sqsKey //only for testing
+      console.log("Beginning QC Task from AWS Fargate", qc_sqsUrl);
+      console.log("Beginning QC Task from AWS Fargate w/constructed url", qc_sqsUrl_v);
+      runECSTask(qc_sqsUrl_v, "QC")
       .then((result) => {
         if (result) {
           //call waitfortasktorun here before returning
