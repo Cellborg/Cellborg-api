@@ -15,6 +15,7 @@ const jwtMiddleware = async (req, res, next) => {
         //const secret = "gBsuHo9HV6D4zrF+HtLBQ1C8n9W7h37W5beOuDXBw0A="
     
         const encryptionSecret = await hkdf.hkdf("sha256", SECRET, "",  "NextAuth.js Generated Encryption Key", 32);
+        console.log(token, " -- ", encryptionSecret);
         const {payload} = await jose.jwtDecrypt(token, encryptionSecret);
         console.log("\nJWT AUTHENTICATED SUCCESSFULLY!\n\nJWT payload is:", payload);
         next();
