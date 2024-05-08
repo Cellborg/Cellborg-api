@@ -75,8 +75,12 @@ async function checkQCTaskStatus (req, res) {
     waitForTaskToRun(request, QC_CLUSTER)
     .then((response) => {
       if (response === true) {
-        console.log("The ECS Task is now running")
+        console.log("The ECS Task is now running");
         res.status(200).json({ready: true});
+      }
+      else if(response ===false){
+        console.log("THE ECS Task is still pending");
+        res.status(200).json({ready: false});
       }
     }) 
     .catch((error) => {

@@ -17,22 +17,24 @@ const WAIT_INTERVAL = 10000;      // Time (in ms) to wait between checks (10 sec
 
 async function waitForTaskToRun(taskArn, taskCluster) {
   let retries = 0;
-  while (retries < MAX_RETRIES) {
-    const params = {
-      cluster: taskCluster,
-      tasks: [taskArn]
-    };
-    const command = new DescribeTasksCommand(params);
-    const response = await ecsClient.send(command);
-    const task = response.tasks[0];
-    console.log(task);
-    if (task && task.lastStatus === "RUNNING") {
-      console.log("TASK IS RUNNING");
-      return true; 
-    }
+  const params = {
+    cluster: taskCluster,
+    tasks: [taskArn]
+  };
+  const command = new DescribeTasksCommand(params);
+  const response = await ecsClient.send(command);
+  const task = response.tasks[0];
+  console.log(task);
+  if (task && task.lastStatus === "RUNNING") {
+    console.log("TASK IS RUNNING");
+    return true; 
+  }
+  else if(task && task.lastStatus === "PENDING") {
+    console.log("TASK IS PENDING");
+    return false;
     // If not running, wait & retry
-    await new Promise(res => setTimeout(res, WAIT_INTERVAL));
-    retries++;
+    //const prom =  await new Promise(res => setTimeout(res, WAIT_INTERVAL));
+    //retries++;  
   }
   throw new Error("Task did not transition to RUNNING state in time");
 }
