@@ -11,6 +11,7 @@ on:
       environ:
         description: 'environment'
         required: false
+        default: 'beta'
     
 jobs:
   # build:
