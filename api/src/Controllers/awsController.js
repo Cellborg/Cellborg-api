@@ -22,6 +22,7 @@ async function waitForTaskToRun(taskArn, taskCluster) {
     tasks: [taskArn]
   };
   const command = new DescribeTasksCommand(params);
+  console.log("Before sending request");
   const response = await ecsClient.send(command);
   const task = response.tasks[0];
   console.log("Task response is here: ", task);
