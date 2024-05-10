@@ -69,25 +69,6 @@ async function qualityControlCleanup (req, res) {
     }
 }
 
-async function checkQCTaskStatus (req, res) {
-    const request = req.body.taskArn;
-    console.log("Received request to check status of AWS ECS Fargate task: ", request);
-    waitForTaskToRun(request, QC_CLUSTER)
-    .then((response) => {
-      if (response === true) {
-        console.log("The ECS Task is now running");
-        res.status(200).json({ready: true});
-      }
-      else if(response ===false){
-        console.log("THE ECS Task is still pending");
-        res.status(200).json({ready: false});
-      }
-    }) 
-    .catch((error) => {
-      console.log("Error getting the status of the QC task: ", request, error);
-      res.status(500);
-    })
-}
 
 async function loadQualityControlPlot (req, res) {
     qualityControlPlotData = req.body;
