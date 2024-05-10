@@ -26,20 +26,13 @@ async function waitForTaskToRun(taskArn, taskCluster) {
   const response = await ecsClient.send(command);
   const task = response.tasks[0];
   console.log("Task response is here: ", task);
-  if (task && task.lastStatus === "RUNNING") {
+  if (task && task.lastStatus === 'RUNNING') {
     console.log("TASK IS RUNNING");
     return true; 
   }
-  else if(task && task.lastStatus === "PENDING") {
-    console.log("TASK IS PENDING");
-    return false;
-    // If not running, wait & retry
-    //const prom =  await new Promise(res => setTimeout(res, WAIT_INTERVAL));
-    //retries++;  
-  }
-  else if(task && task.lastStatus === null){
-    console.log("Task.lastStatus is null")
-    return false;
+  else if(task && (task.lastStatus === 'PENDING' || task.lastStatus === 'PROVISIONING')) {
+    console.log("TASK IS PENDING/PROVISIONING");
+    return false;  
   }
   throw new Error("Task did not transition to RUNNING state in time");
 }
