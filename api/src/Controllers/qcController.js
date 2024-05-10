@@ -79,7 +79,7 @@ async function checkQCTaskStatus (req, res) {
       res.status(200).json({ready: true});
     }
     else if(response === false){
-      console.loge("The ECS Task is not running yet")
+      console.log("The ECS Task is not running yet")
       res.status(200).json({ready:false})
     }
   }) 
