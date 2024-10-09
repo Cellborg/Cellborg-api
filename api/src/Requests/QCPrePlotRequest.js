@@ -1,20 +1,18 @@
 const RequestTypes = require("./requestTypes.js");
 const { v4: uuidv4 } = require('uuid');
 
-class QualityControlRequest {
+class QCPrePlotRequest {
 
     constructor(sqsQueue, qualityControlData) {
-      const { user, project, dataset, min, max, mt } = qualityControlData;
+      const { user, project, dataset,mt} = qualityControlData;
       this.queueUrl = sqsQueue;
       this.messageGroupId = uuidv4();
       this.messageDeduplicationId = uuidv4();
       this.messageBody = {
-        requestType: RequestTypes.QUALITY_CONTROL,
+        requestType: RequestTypes.QC_PRE_PLOT,
         user: user,
         project: project,
         dataset: dataset,
-        min: min,
-        max: max,
         mt: mt
       };
     }
@@ -29,4 +27,4 @@ class QualityControlRequest {
     }
   }
   
-module.exports = QualityControlRequest;
+module.exports = QCPrePlotRequest;

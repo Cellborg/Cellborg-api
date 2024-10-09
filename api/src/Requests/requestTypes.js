@@ -1,6 +1,8 @@
 const RequestTypes = {
     INITIALIZE: "initializeProject",
-    QUALITY_CONTROL: "qualityControl",
+    QC_PRE_PLOT: "QCPrePlot",
+    QC_DOUBLET: "QCDoublet",
+    QC_FINISH_DOUBLET: "QCFinishDoublet",
     VARIABLE_FEATURES: "variableFeatures",
     CLUSTER: "cluster",
     FEATURE_PLOT: "featurePlot",
