@@ -1,18 +1,50 @@
-const QualityControlRequest = require('../Requests/QualityControlRequest.js');
+const QCPrePlotRequest = require('../Requests/QCPrePlotRequest.js');
+const QCDoubletRequest = require('../Requests/DoubletRequest.js');
+const QCFinishDoublet = require('../Requests/DoubletRequest.js');
 const KillServerRequest = require('../Requests/KillServerRequest.js');
 const { QC_CLUSTER, ENVIRONMENT } = require('../constants.js');
 const { waitForTaskToRun, getSQSQueueUrl, createSQSQueue, deleteSQSQueue,
   runECSTask, sendSQSMessage } = require('./awsController.js');
 
-async function performQualityControl (req, res) {
+/*async function finishDoublet(req, res){
+  const request = req.body;
+  console.log(request);
+  const queueName = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`;
+  const qc_sqsUrl = await getSQSQueueUrl(queueName);
+  const SQSMessageRequest = new QCFinishDoublet(qc_sqsUrl, request);
+  sendSQSMessage(SQSMessageRequest.getMessageParams())
+  .then(() => {
+    return res.status(200).json({message: "Request successful"});
+  })
+  .catch((error)=> {
+    return res.status(500).json({message: "An error occurred: ", error});
+  });
+}*/
+
+async function performQCDoublet(req, res){
+  const request = req.body;
+  console.log(request)
+  const queueName = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`;
+  const qc_sqsUrl = await getSQSQueueUrl(queueName);
+  const SQSMessageRequest = new QCDoubletRequest(qc_sqsUrl, request);
+  sendSQSMessage(SQSMessageRequest.getMessageParams())
+  .then(() => {
+    return res.status(200).json({ message: 'Request successful' });
+  })
+  .catch((error) => {
+    console.log(error);
+    return res.status(500).json({ error: 'An error occurred' });
+  }); 
+}
+async function performQCMetricsPrePlot(req, res){
     const request = req.body;
-    console.log(request,'REQUEST FOR PERFORM IS HERE')
+    console.log(request,'REQUEST FOR PERFORM IS HERE');
     const queueName = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`;
     console.log("Sending request to QC SQS: ", request);
     // check ECS task status here instead of in frontend
-    // waitForTaskToRun(request)
+    // waitForTaskToRun(request)  
     const qc_sqsUrl = await getSQSQueueUrl(queueName);
-    const SQSMessageRequest = new QualityControlRequest(qc_sqsUrl, request);
+    const SQSMessageRequest = new QCPrePlotRequest(qc_sqsUrl, request);
     sendSQSMessage(SQSMessageRequest.getMessageParams())
     .then(() => {
       return res.status(200).json({ message: 'Request successful' });
@@ -26,7 +58,6 @@ async function performQualityControl (req, res) {
 async function beginQualityControl (req, res) {
     console.log("Creating SQS for QC task");
     const request = req.body;
-    //TODO: add userID once we shift over from email to userID
     const sqsKey = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`;
     try {
       const qc_sqsUrl = createSQSQueue(sqsKey);
@@ -49,7 +80,6 @@ async function beginQualityControl (req, res) {
       return res.status(500).json({ error: 'An error occurred' });
     }
 }
-
 async function qualityControlCleanup (req, res) {
     const request = req.body;
     // Should have user, project, dataset
@@ -103,5 +133,5 @@ async function loadQualityControlPlot (req, res) {
     })
 }
 
-module.exports = {performQualityControl, beginQualityControl, qualityControlCleanup,
-  checkQCTaskStatus, loadQualityControlPlot}
+module.exports = {performQCMetricsPrePlot, beginQualityControl, qualityControlCleanup,
+  checkQCTaskStatus, loadQualityControlPlot, performQCDoublet}
