@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 class QCDoubletRequest {
 
     constructor(sqsQueue, qualityControlData) {
-      const { user, project, dataset,countMx, countMn, geneMx, geneMn, mitoMx, mitoMn} = qualityControlData;
+      const { user, project, dataset,countMax, countMin, geneMax, geneMin, mitoMax, mitoMin} = qualityControlData;
       this.queueUrl = sqsQueue;
       this.messageGroupId = uuidv4();
       this.messageDeduplicationId = uuidv4();
@@ -13,12 +13,12 @@ class QCDoubletRequest {
         user: user,
         project: project,
         dataset: dataset,
-        countMx: countMx,
-        countMn: countMn,
-        geneMx:geneMx,
-        geneMn:geneMn,
-        mitoMx:mitoMx,
-        mitoMn:mitoMn
+        countMax: countMax,
+        countMin: countMin,
+        geneMax:geneMax,
+        geneMin:geneMin,
+        mitoMax:mitoMax,
+        mitoMin:mitoMin
       };
     }
   
