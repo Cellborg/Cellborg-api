@@ -134,4 +134,4 @@ async function loadQualityControlPlot (req, res) {
 }
 
 module.exports = {performQCMetricsPrePlot, beginQualityControl, qualityControlCleanup,
-  checkQCTaskStatus, loadQualityControlPlot, performQCDoublet, finishDoublet}
+  checkQCTaskStatus, loadQualityControlPlot, performQCDoublet}
