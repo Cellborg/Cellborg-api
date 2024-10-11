@@ -9,7 +9,7 @@ class QCPrePlotRequest {
       this.messageGroupId = uuidv4();
       this.messageDeduplicationId = uuidv4();
       this.messageBody = {
-        requestType: RequestTypes.PRE-PLOT,
+        requestType: RequestTypes.QC_PRE_PLOT,
         user: user,
         project: project,
         dataset: dataset,
