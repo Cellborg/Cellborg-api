@@ -12,5 +12,5 @@ router.route('/performQCDoublets').post(qcController.performQCDoublet);
 router.route('/beginProcessing').post(qcController.beginProcessing);
 router.route('/clustering').post(qcController.clustering);
 router.route('/annotations').post(qcController.annotations);
-//router.route('finishDoublets').post(qcController.finishDoublet);
+
 module.exports = router;
