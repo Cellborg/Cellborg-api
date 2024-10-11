@@ -1,21 +1,18 @@
 const RequestTypes = require("./requestTypes.js");
 const { v4: uuidv4 } = require('uuid');
 
-class QualityControlRequest {
+class ProcessingRequest {
 
     constructor(sqsQueue, qualityControlData) {
-      const { user, project, dataset, min, max, mt } = qualityControlData;
+      const { user, project, datasets} = qualityControlData;
       this.queueUrl = sqsQueue;
       this.messageGroupId = uuidv4();
       this.messageDeduplicationId = uuidv4();
       this.messageBody = {
-        requestType: RequestTypes.QUALITY_CONTROL,
+        requestType: RequestTypes.PROCESSING,
         user: user,
         project: project,
-        dataset: dataset,
-        min: min,
-        max: max,
-        mt: mt
+        datasets: datasets,
       };
     }
   
@@ -29,4 +26,4 @@ class QualityControlRequest {
     }
   }
   
-module.exports = QualityControlRequest;
+module.exports = ProcessingRequest;

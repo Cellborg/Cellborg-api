@@ -1,19 +1,22 @@
-const QualityControlRequest = require('../Requests/QualityControlRequest.js');
+const QCPrePlotRequest = require('../Requests/QCPrePlotRequest.js');
+const QCDoubletRequest = require('../Requests/DoubletRequest.js');
+const ProcessingRequest = require('../Requests/ProcessingRequest.js');
+const ClusterSqsMessageRequest = require('../Requests/ClusterSqsMessageRequest.js');
+const AnnotationsRequest = require('../Requests/AnnotationsRequest.js');
+//const QCFinishDoublet = require('../Requests/finishDoubletRequest.js');
 const KillServerRequest = require('../Requests/KillServerRequest.js');
 const { QC_CLUSTER, ENVIRONMENT } = require('../constants.js');
 const { waitForTaskToRun, getSQSQueueUrl, createSQSQueue, deleteSQSQueue,
   runECSTask, sendSQSMessage } = require('./awsController.js');
 
-async function performQualityControl (req, res) {
-    const request = req.body;
-    console.log(request,'REQUEST FOR PERFORM IS HERE')
-    const queueName = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`;
-    console.log("Sending request to QC SQS: ", request);
-    // check ECS task status here instead of in frontend
-    // waitForTaskToRun(request)
-    const qc_sqsUrl = await getSQSQueueUrl(queueName);
-    const SQSMessageRequest = new QualityControlRequest(qc_sqsUrl, request);
-    sendSQSMessage(SQSMessageRequest.getMessageParams())
+async function performQCMetricsPrePlot(req, res){
+  const request = req.body;
+  console.log(request,'REQUEST FOR PERFORM IS HERE');
+  const queueName = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`;
+  console.log("Sending request to QC SQS: ", request);
+  const qc_sqsUrl = await getSQSQueueUrl(queueName);
+  const SQSMessageRequest = new QCPrePlotRequest(qc_sqsUrl, request);
+  sendSQSMessage(SQSMessageRequest.getMessageParams())
     .then(() => {
       return res.status(200).json({ message: 'Request successful' });
     })
@@ -21,6 +24,21 @@ async function performQualityControl (req, res) {
       console.log(error);
       return res.status(500).json({ error: 'An error occurred' });
     }); 
+}
+async function performQCDoublet(req, res){
+  const request = req.body;
+  console.log(request)
+  const queueName = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`;
+  const qc_sqsUrl = await getSQSQueueUrl(queueName);
+  const SQSMessageRequest = new QCDoubletRequest(qc_sqsUrl, request);
+  sendSQSMessage(SQSMessageRequest.getMessageParams())
+  .then(() => {
+    return res.status(200).json({ message: 'Request successful' });
+  })
+  .catch((error) => {
+    console.log(error);
+    return res.status(500).json({ error: 'An error occurred' });
+  }); 
 }
 
 async function beginQualityControl (req, res) {
@@ -103,5 +121,52 @@ async function loadQualityControlPlot (req, res) {
     })
 }
 
-module.exports = {performQualityControl, beginQualityControl, qualityControlCleanup,
-  checkQCTaskStatus, loadQualityControlPlot}
+async function beginProcessing(req, res){
+  const initProject = req.body;
+  console.log("Recived request to start initializing project...");
+  const queueName = `${ENVIRONMENT}_${initProject.user}_${initProject.project}_QC.fifo`;
+  const qc_sqsUrl = await getSQSQueueUrl(queueName);
+  const SQSMessageRequest = new ProcessingRequest(qc_sqsUrl, initProject);
+  sendSQSMessage(SQSMessageRequest.getMessageParams())
+  .then(() => {
+    return res.status(200).json({ message: 'Request successful' });
+  })
+  .catch((error) => {
+    console.log(error);
+    return res.status(500).json({ error: 'An error occurred' });
+  }); 
+}
+async function clustering(req, res){
+  const clusterBody = req.body;
+  console.log("Recieved request to start clustering");
+  const queueName = `${ENVIRONMENT}_${clusterBody.user}_${clusterBody.project}_QC.fifo`;
+  const qc_sqsUrl = await getSQSQueueUrl(queueName);
+  const SQSMessageRequest = new ClusterSqsMessageRequest(qc_sqsUrl, clusterBody);
+  sendSQSMessage(SQSMessageRequest.getMessageParams())
+  .then(() => {
+    return res.status(200).json({ message: 'Request successful' });
+  })
+  .catch((error) => {
+    console.log(error);
+    return res.status(500).json({ error: 'An error occurred' });
+  }); 
+}
+
+async function annotations(req, res){
+  const annoBody = req.body;
+  console.log("Recieved request to start annotating");
+  const queueName = `${ENVIRONMENT}_${annoBody.user}_${annoBody.project}_QC.fifo`;
+  const qc_sqsUrl = await getSQSQueueUrl(queueName);
+  const SQSMessageRequest = new AnnotationsRequest(qc_sqsUrl, annoBody);
+  sendSQSMessage(SQSMessageRequest.getMessageParams())
+  .then(() => {
+    return res.status(200).json({ message: 'Request successful' });
+  })
+  .catch((error) => {
+    console.log(error);
+    return res.status(500).json({ error: 'An error occurred' });
+  }); 
+
+}
+module.exports = {performQCMetricsPrePlot, beginQualityControl, qualityControlCleanup,
+  checkQCTaskStatus, loadQualityControlPlot, performQCDoublet,beginProcessing, clustering, annotations}

@@ -118,11 +118,11 @@ app.post('/api/begin', (req, res) => {
   return res.status(200).json({ message: 'Successful' });
 });
 
-async function markComplete (user, project, dataset) {
+async function markDataset (user, project, dataset, stage) {
   try {
      const result = await mongoClient.db('Cellborg').collection('Projects').updateOne(
       { 'user': user, 'project_id': project, 'datasets.name': dataset },
-      { $set: { 'datasets.$.status': 'complete' }}
+      { $set: { 'datasets.$.status': stage }}
     );
     console.log(result);
   } catch (error) {
@@ -182,21 +182,36 @@ app.post('/api/sns', async (req, res) => {
       const user = messageBody.user;
       const project = messageBody.project;
       const dataset = messageBody.dataset;
-      const cell_count = messageBody.cell_count;
-      const gene_count = messageBody.gene_count
+      const stage = messageBody.stage;
 
-      console.log(`${user} request for QC complete on dataset: ${dataset} in project ${project}, with ${cell_count} cells and ${gene_count} genes`);
+      console.log(`${user} request for QC ${stage} complete on dataset: ${dataset} in project ${project}`);
 
       // Update mongo project entry to mark dataset status as "complete"
-      await markComplete(user, project, dataset);
+      await markDataset(user, project, dataset, stage);
       console.log("mongo entry updated");
 
       // Send websocket message to frontend to mark dataset status as "complete"
       console.log(userSocketMap);
       console.log(userSocketMap[user]);
-      if (userSocketMap[user]) {
-        console.log("emitting socket...")
-        userSocketMap[user].emit('QC_Complete', { user, project, dataset, cell_count, gene_count });
+      if (userSocketMap[user] && stage == "prePlot") {
+        console.log("emitting socket for pre-plot...");
+        userSocketMap[user].emit('QC_Pre_Plot_Complete', { user, project, dataset, cell_count, gene_count });
+      }
+      else if(userSocketMap[user] && stage == "doublet"){
+        console.log("emitting socket for doublet...");
+        userSocketMap[user].emit('QC_Doublet_Complete', {user, project, dataset});
+      }
+      else if(userSocketMap[user] && stage == "initialized"){
+        console.log("emitting socket for doublet...");
+        userSocketMap[user].emit('QC_Initialize_Project', {user, project, dataset});
+      }
+      else if(userSocketMap[user] && stage == "cluster"){
+        console.log("emitting socket for doublet...");
+        userSocketMap[user].emit('QC_Clustering_Complete', {user, project, dataset});
+      }
+      else if(userSocketMap[user] && stage == "annotations"){
+        console.log("emitting socket for doublet...");
+        userSocketMap[user].emit('QC_Annotations_Complete', {user, project, dataset});
       }
       res.sendStatus(200);
     } else {
