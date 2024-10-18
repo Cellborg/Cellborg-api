@@ -151,17 +151,25 @@ async function beginProcessing(req, res){
   const initProject = req.body;
   console.log("Recived request to start initializing project...");
   const sqsKey = `${ENVIRONMENT}_${initProject.user}_${initProject.project}_QC.fifo`;
-  const qc_sqsUrl = await getSQSQueueUrl(sqsKey);
-  const SQSMessageRequest = new ProcessingRequest(qc_sqsUrl, initProject);
-  sendSQSMessage(SQSMessageRequest.getMessageParams())
-  .then(() => {
-    return res.status(200).json({ message: 'Request successful' });
-  })
-  .catch((error) => {
-    console.log(error);
+  try{
+    //make sure queue is not initialized using undefined values
+    if(request.user==undefined || request.project==undefined || request.dataset == undefined){
+      throw new Error("parameters not set correctly!")
+    }
+    const qc_sqsUrl = await getSQSQueueUrl(sqsKey);
+    const SQSMessageRequest = new ProcessingRequest(qc_sqsUrl, initProject);
+    sendSQSMessage(SQSMessageRequest.getMessageParams())
+    .then(() => {
+      return res.status(200).json({ message: 'Request successful' });
+    })
+    .catch((error) => {
+      console.log(error);
+      return res.status(500).json({ error: 'An error occurred' });
+    }); 
+  }catch(error){
+    console.log("Error performing QC: ", error)
     return res.status(500).json({ error: 'An error occurred' });
-  }); 
-}
+  }}
 
 async function clustering(req, res){
   const clusterBody = req.body;
