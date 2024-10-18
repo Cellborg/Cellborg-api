@@ -21,7 +21,8 @@ class QCDoubletRequest {
         mitoMin:mitoMin
       };
     }
-  
+
+
     getMessageParams() {
       return {
         QueueUrl: this.queueUrl,
@@ -31,5 +32,5 @@ class QCDoubletRequest {
       };
     }
   }
-  
+
 module.exports = QCDoubletRequest;

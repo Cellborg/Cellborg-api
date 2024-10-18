@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 class ClusterSqsMessageRequest {
 
     constructor(sqsUrl, clusterplotData) {
-      const { user, project, analysisId, neighbors, clusters, dimensions, reduction } = clusterplotData;
+      const { user, project, resolution } = clusterplotData;
       this.queueUrl = sqsUrl;
       this.messageGroupId = uuidv4();
       this.messageDeduplicationId = uuidv4();
@@ -12,11 +12,7 @@ class ClusterSqsMessageRequest {
         requestType: RequestTypes.CLUSTER,
         user: user,
         project: project,
-        analysisId: analysisId,
-        neighbors: neighbors,
-        clusters: clusters,
-        dimensions: dimensions,
-        reduction: reduction,
+        resolution: resolution
       };
     }
   

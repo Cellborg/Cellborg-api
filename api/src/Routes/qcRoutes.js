@@ -9,4 +9,9 @@ router.route('/checkQCTaskStatus').post(qcController.checkQCTaskStatus);
 router.route('/loadQualityControlPlot').post(qcController.loadQualityControlPlot);
 router.route('/performQCDoublets').post(qcController.performQCDoublet);
 //router.route('finishDoublets').post(qcController.finishDoublet);
+router.route('/prepareProcessing').post(qcController.prepareProcessing)
+router.route('/beginProcessing').post(qcController.beginProcessing);
+router.route('/clustering').post(qcController.clustering);
+router.route('/annotations').post(qcController.annotations);
+
 module.exports = router;

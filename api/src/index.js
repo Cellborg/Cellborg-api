@@ -195,7 +195,23 @@ app.post('/api/sns', async (req, res) => {
       console.log(userSocketMap[user]);
       if (userSocketMap[user] && stage == "prePlot") {
         console.log("emitting socket for pre-plot...");
-        userSocketMap[user].emit('QC_Pre_Plot_Complete', { user, project, dataset});
+        userSocketMap[user].emit('QC_Pre_Plot_Complete', { user, project, dataset, cell_count, gene_count });
+      }
+      else if(userSocketMap[user] && stage == "doublet"){
+        console.log("emitting socket for doublet...");
+        userSocketMap[user].emit('QC_Doublet_Complete', {user, project, dataset});
+      }
+      else if(userSocketMap[user] && stage == "initialized"){
+        console.log("emitting socket for doublet...");
+        userSocketMap[user].emit('QC_Initialize_Project', {user, project, dataset});
+      }
+      else if(userSocketMap[user] && stage == "cluster"){
+        console.log("emitting socket for doublet...");
+        userSocketMap[user].emit('QC_Clustering_Complete', {user, project, dataset});
+      }
+      else if(userSocketMap[user] && stage == "annotations"){
+        console.log("emitting socket for doublet...");
+        userSocketMap[user].emit('QC_Annotations_Complete', {user, project, dataset});
       }
       else if(userSocketMap[user] && stage == "doublet"){
         console.log("emitting socket for doublet...");
