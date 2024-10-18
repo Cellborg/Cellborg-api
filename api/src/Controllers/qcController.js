@@ -130,46 +130,46 @@ async function prepareProcessing(req, res){
   const initProject = req.body;
   console.log("Recived request to start processing task...");
   const sqsKey = `${ENVIRONMENT}_${initProject.user}_${initProject.project}_QC.fifo`;
-  console.log("Creating queue")
-  const createSQS = createSQSQueue(sqsKey);
-  var qc_sqsUrl_v = "https://sqs.us-west-2.amazonaws.com/865984939637/"+sqsKey //only for testing
-  console.log("Beginning QC Task from AWS Fargate", createSQS);
-  console.log("Beginning QC Task from AWS Fargate w/constructed url", qc_sqsUrl_v);
-  runECSTask(qc_sqsUrl_v, "QC")
-  .then((result)=>{
-    if (result) {
-      //call waitfortasktorun here before returning
-      return res.status(200).json({ taskArn: result });
-    }
-  })
-  .catch((error) => {
-    console.log(error);
-    return res.status(500).json({ error: 'An error occurred' });
-  }); 
-}
-async function beginProcessing(req, res){
-  const initProject = req.body;
-  console.log("Recived request to start initializing project...");
-  const sqsKey = `${ENVIRONMENT}_${initProject.user}_${initProject.project}_QC.fifo`;
   try{
     //make sure queue is not initialized using undefined values
     if(request.user==undefined || request.project==undefined || request.dataset == undefined){
       throw new Error("parameters not set correctly!")
     }
-    const qc_sqsUrl = await getSQSQueueUrl(sqsKey);
-    const SQSMessageRequest = new ProcessingRequest(qc_sqsUrl, initProject);
-    sendSQSMessage(SQSMessageRequest.getMessageParams())
-    .then(() => {
-      return res.status(200).json({ message: 'Request successful' });
+    console.log("Creating queue")
+    const createSQS = createSQSQueue(sqsKey);
+    var qc_sqsUrl_v = "https://sqs.us-west-2.amazonaws.com/865984939637/"+sqsKey //only for testing
+    console.log("Beginning QC Task from AWS Fargate", createSQS);
+    console.log("Beginning QC Task from AWS Fargate w/constructed url", qc_sqsUrl_v);
+    runECSTask(qc_sqsUrl_v, "QC")
+    .then((result)=>{
+      if (result) {
+        return res.status(200).json({ taskArn: result });
+      }
     })
     .catch((error) => {
       console.log(error);
       return res.status(500).json({ error: 'An error occurred' });
     }); 
   }catch(error){
-    console.log("Error performing QC: ", error)
+    console.log("Error starting processing: ", error)
     return res.status(500).json({ error: 'An error occurred' });
   }}
+
+async function beginProcessing(req, res){
+  const initProject = req.body;
+  console.log("Recived request to start initializing project...");
+  const sqsKey = `${ENVIRONMENT}_${initProject.user}_${initProject.project}_QC.fifo`;
+  const qc_sqsUrl = await getSQSQueueUrl(sqsKey);
+  const SQSMessageRequest = new ProcessingRequest(qc_sqsUrl, initProject);
+  sendSQSMessage(SQSMessageRequest.getMessageParams())
+  .then(() => {
+    return res.status(200).json({ message: 'Request successful' });
+  })
+  .catch((error) => {
+    console.log(error);
+    return res.status(500).json({ error: 'An error occurred' });
+  }); 
+}
 
 async function clustering(req, res){
   const clusterBody = req.body;
