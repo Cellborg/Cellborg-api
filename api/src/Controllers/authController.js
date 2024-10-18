@@ -49,14 +49,10 @@ async function login (request, response) {
   const authenticateUser = async (email, password) => {
       console.log("Authenticating user: ", email)
       const data= await mongoClient.db(`Cellborg-${ENVIRONMENT}`).collection('Userdata').findOne({'email':email});
-      if(data==null){
+      if(data==null || data.password!=password){
         return {valid:false, user_id:null};
       }
-      if (data.password==password){
-        return {valid:true, user_id:data.user_id};
-      }else{
-        return {valid:false, user_id:null};
-      }
+      return {valid:true, user_id:data.user_id};
   };
 
 module.exports = { signup, login };

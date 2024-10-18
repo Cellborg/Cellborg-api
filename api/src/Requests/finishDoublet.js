@@ -16,7 +16,7 @@ class QCFinishDoubletRequest {
         doubletScore: doubletScore
       };
     }
-
+  
     getMessageParams() {
       return {
         QueueUrl: this.queueUrl,
@@ -26,5 +26,5 @@ class QCFinishDoubletRequest {
       };
     }
   }
-
+  
 module.exports = QCFinishDoubletRequest;

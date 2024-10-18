@@ -44,12 +44,19 @@ async function performQCDoublet(req, res){
 async function beginQualityControl (req, res) {
     console.log("Creating SQS for QC task");
     const request = req.body;
+    
     const sqsKey = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`;
     try {
+      //make sure queue is not initialized using undefined values
+      if(request.user==undefined || request.project==undefined || request.dataset == undefined){
+        throw new Error("parameters not set correctly!")
+      }
+      //create sqsqueue
       const qc_sqsUrl = createSQSQueue(sqsKey);
       var qc_sqsUrl_v = "https://sqs.us-west-2.amazonaws.com/865984939637/"+sqsKey //only for testing
       console.log("Beginning QC Task from AWS Fargate", qc_sqsUrl);
       console.log("Beginning QC Task from AWS Fargate w/constructed url", qc_sqsUrl_v);
+      //start ecs task
       runECSTask(qc_sqsUrl_v, "QC")
       .then((result) => {
         if (result) {
@@ -68,7 +75,6 @@ async function beginQualityControl (req, res) {
 }
 async function qualityControlCleanup (req, res) {
     const request = req.body;
-    // Should have user, project, dataset
     console.log(request);
     const queueName = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`
     const qc_sqsUrl = await getSQSQueueUrl(queueName);
