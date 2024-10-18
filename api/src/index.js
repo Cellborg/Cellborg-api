@@ -213,6 +213,14 @@ app.post('/api/sns', async (req, res) => {
         console.log("emitting socket for doublet...");
         userSocketMap[user].emit('QC_Annotations_Complete', {user, project, dataset});
       }
+      else if(userSocketMap[user] && stage == "doublet"){
+        console.log("emitting socket for doublet...");
+        userSocketMap[user].emit('QC_Doublet_Complete', {user, project, dataset});
+      }
+      /*else if(userSocketMap[user] && stage == "FinishDoublet"){
+        console.log("emitting socket connection for finishing QC");
+        userSocketMap[user].emit('QC_Complete', {user, project, dataset});
+      }*/
       res.sendStatus(200);
     } else {
       res.status(400).send('Incomplete request');

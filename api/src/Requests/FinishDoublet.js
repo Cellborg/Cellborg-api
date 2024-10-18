@@ -1,28 +1,22 @@
 const RequestTypes = require("./requestTypes.js");
 const { v4: uuidv4 } = require('uuid');
 
-class QCDoubletRequest {
+class QCFinishDoubletRequest {
 
     constructor(sqsQueue, qualityControlData) {
-      const { user, project, dataset,countMax, countMin, geneMax, geneMin, mitoMax, mitoMin} = qualityControlData;
+      const { user, project, dataset, doubletScore} = qualityControlData;
       this.queueUrl = sqsQueue;
       this.messageGroupId = uuidv4();
       this.messageDeduplicationId = uuidv4();
       this.messageBody = {
-        requestType: RequestTypes.QC_DOUBLET,
+        requestType: RequestTypes.QC_FINISH_DOUBLET,
         user: user,
         project: project,
         dataset: dataset,
-        countMax: countMax,
-        countMin: countMin,
-        geneMax:geneMax,
-        geneMin:geneMin,
-        mitoMax:mitoMax,
-        mitoMin:mitoMin
+        doubletScore: doubletScore
       };
     }
-
-
+  
     getMessageParams() {
       return {
         QueueUrl: this.queueUrl,
@@ -32,5 +26,5 @@ class QCDoubletRequest {
       };
     }
   }
-
-module.exports = QCDoubletRequest;
+  
+module.exports = QCFinishDoubletRequest;

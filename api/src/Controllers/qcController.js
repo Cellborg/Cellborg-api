@@ -17,13 +17,13 @@ async function performQCMetricsPrePlot(req, res){
   const qc_sqsUrl = await getSQSQueueUrl(queueName);
   const SQSMessageRequest = new QCPrePlotRequest(qc_sqsUrl, request);
   sendSQSMessage(SQSMessageRequest.getMessageParams())
-    .then(() => {
-      return res.status(200).json({ message: 'Request successful' });
-    })
-    .catch((error) => {
-      console.log(error);
-      return res.status(500).json({ error: 'An error occurred' });
-    }); 
+  .then(() => {
+    return res.status(200).json({ message: 'Request successful' });
+  })
+  .catch((error) => {
+    console.log(error);
+    return res.status(500).json({ error: 'An error occurred' });
+  });
 }
 async function performQCDoublet(req, res){
   const request = req.body;
@@ -44,7 +44,6 @@ async function performQCDoublet(req, res){
 async function beginQualityControl (req, res) {
     console.log("Creating SQS for QC task");
     const request = req.body;
-    //TODO: add userID once we shift over from email to userID
     const sqsKey = `${ENVIRONMENT}_${request.user}_${request.project}_${request.dataset}_QC.fifo`;
     try {
       const qc_sqsUrl = createSQSQueue(sqsKey);
@@ -67,7 +66,6 @@ async function beginQualityControl (req, res) {
       return res.status(500).json({ error: 'An error occurred' });
     }
 }
-
 async function qualityControlCleanup (req, res) {
     const request = req.body;
     // Should have user, project, dataset
@@ -120,6 +118,7 @@ async function loadQualityControlPlot (req, res) {
       return res.status(500).json({ error: 'An error occurred' });
     })
 }
+
 
 async function prepareProcessing(req, res){
   const initProject = req.body;
