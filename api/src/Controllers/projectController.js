@@ -37,22 +37,28 @@ async function getproject (req, res) {
 
 
 async function updateproject (req, res) {
-    const data = req.body.project;
-    const id = req.body.id;
-    const objectId = new ObjectId(id);
-    delete data._id;
-    console.log(data, id, objectId);
-  
-    try {
-      const result = await mongoClient.db(`Cellborg-${ENVIRONMENT}`)
-      .collection('Projects')
-      .updateOne({ _id: objectId }, { $set: data });
-      console.log('Project updated successfully');
-      res.status(200).json("success");
-    } catch (error) {
-      console.error('Error updating project:', error);
-      res.status(500);
+  const data = req.body.project;
+  const id = req.body.id;
+  const objectId = new ObjectId(id);
+  delete data._id;
+  //add dataset id for new datasets
+  for(var dataset of data.datasets){
+    if(!(dataset?.dataset_id)){
+      dataset.dataset_id = nanoid();
     }
+  }
+  console.log(data, id, objectId)
+  try {
+    const result = await mongoClient.db(`Cellborg-${ENVIRONMENT}`)
+    .collection('Projects')
+    .updateOne({ _id: objectId }, { $set: data });
+    console.log('Project updated successfully', result );
+    console.log(data)
+    res.status(200).json({success: result.acknowledged, project:data});
+  } catch (error) {
+    console.error('Error updating project:', error);
+    res.status(500);
+  }
 }
   
 async function newproject (req, res) {
