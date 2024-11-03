@@ -20,7 +20,7 @@ module.exports = {
     US_WEST_2: 'us-west-2',
     QC_CLUSTER: `${AWS_BASE}:cluster/${CLUSTER_NAME}`,
     ANALYSIS_CLUSTER: `${AWS_BASE}:cluster/${ANALYSIS_CLUSTER_NAME}`,
-    QC_TASK_DEFINITION: `${AWS_BASE}:task-definition/${TASK_NAME}:${IS_DEV ? 12 : 40}`,
+    QC_TASK_DEFINITION: `${AWS_BASE}:task-definition/${TASK_NAME}:${IS_DEV ? 12 : 46}`,
     FARGATE: "FARGATE",
     //TODO: we need to get this subnet dynamically? also why code shall be tied to a subnet.
     SUBNET: IS_DEV ? "subnet-0951d410d348bbd0a" : "subnet-06097477406fea990", 
