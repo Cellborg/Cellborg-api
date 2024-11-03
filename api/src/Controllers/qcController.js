@@ -132,7 +132,7 @@ async function prepareProcessing(req, res){
   const sqsKey = `${ENVIRONMENT}_${initProject.user}_${initProject.project}_QC.fifo`;
   try{
     //make sure queue is not initialized using undefined values
-    if(request.user==undefined || request.project==undefined || request.dataset == undefined){
+    if(initProject.user==undefined || initProject.project==undefined){
       throw new Error("parameters not set correctly!")
     }
     console.log("Creating queue")
