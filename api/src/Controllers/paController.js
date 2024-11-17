@@ -118,9 +118,6 @@ async function paCleanup(req, res) {
     }
 }
 
-async function checkPATaskStatus(req, res){
-
-}
 async function checkPATaskStatus (req, res) {
     const request = req.body.taskArn;
     console.log("Received request to check status of AWS ECS Fargate task: ", request);
