@@ -6,9 +6,9 @@ const paController = require("../Controllers/paController");
 router.route('/prepareProcessing').post(paController.prepareProcessing)
 router.route('/beginProcessing').post(paController.beginProcessing);
 router.route('/clustering').post(paController.clustering);
-router.route('/geneexpression').post(pa.constroller.geneexpression);
+router.route('/geneexpression').post(paController.geneexpression);
 router.route('/annotations').post(paController.annotations);
 router.route('/paCleanup').post(paController.paCleanup);
-router.rout('/checkPAStatus'.post(paController.checkPATaskStatus));
+router.route('/checkPAStatus').post(paController.checkPATaskStatus);
 
 module.exports = router;
