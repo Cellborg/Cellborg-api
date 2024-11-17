@@ -35,6 +35,7 @@ app.use(errorHandlerMiddleware);
 app.use('/api/project', jwtMiddleware, require('./Routes/projectRoutes'));
 app.use('/api/user', jwtMiddleware, require('./Routes/userRoutes.js'));
 app.use('/api/qc', jwtMiddleware, require('./Routes/qcRoutes.js'));
+app.use('/api/pa', jwtMiddleware, require('./Routes/paRoutes.js'));
 app.use('/api/analysis', jwtMiddleware, require('./Routes/analysisRoutes.js'));
 app.use('/api/bug',jwtMiddleware,require('./Routes/bugRoutes.js'));
 /* all other routes below no need for auth middleware*/
@@ -212,10 +213,6 @@ app.post('/api/sns', async (req, res) => {
       else if(userSocketMap[user] && stage == "annotations"){
         console.log("emitting socket for doublet...");
         userSocketMap[user].emit('QC_Annotations_Complete', {user, project, dataset, stage});
-      }
-      else if(userSocketMap[user] && stage == "doublet"){
-        console.log("emitting socket for doublet...");
-        userSocketMap[user].emit('QC_Doublet_Complete', {user, project, dataset, stage});
       }
       /*else if(userSocketMap[user] && stage == "FinishDoublet"){
         console.log("emitting socket connection for finishing QC");

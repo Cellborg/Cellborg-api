@@ -7,8 +7,10 @@ const IS_DEV = ENV === 'dev';
 // AWS constants
 const AWS_BASE = "arn:aws:ecs:us-west-2:865984939637";
 const CLUSTER_NAME = IS_DEV ? 'DevCluster' : `Cellborg-${ENV}-QC-Cluster`;
+const PA_CLUSER_NAME = IS_DEV ? 'DevCluster' : `Cellborg-${ENV}-PA-Cluster`; //TODO: CREATE DEV CLUSTER FOR PA
 const ANALYSIS_CLUSTER_NAME = IS_DEV ? 'AnalysisCluster' : `Cellborg-${ENV}-Analysis-Cluster`;
 const TASK_NAME = IS_DEV ? 'Cellborg_QC-Task' : `Cellborg-${ENV}-QC-Task`;
+const PA_TASK_NAME = `Cellborg-${ENV}-PA-Task`;
 const ANALYSIS_TASK_NAME = IS_DEV ? 'Cellborg_Analysis-Task' : `Cellborg-${ENV}-Analysis-Task`;
 
 // General configs
@@ -19,13 +21,16 @@ module.exports = {
     // AWS Constants
     US_WEST_2: 'us-west-2',
     QC_CLUSTER: `${AWS_BASE}:cluster/${CLUSTER_NAME}`,
+    PA_CLUSTER: `${AWS_BASE}:cluster/${PA_CLUSER_NAME}`,
     ANALYSIS_CLUSTER: `${AWS_BASE}:cluster/${ANALYSIS_CLUSTER_NAME}`,
     QC_TASK_DEFINITION: `${AWS_BASE}:task-definition/${TASK_NAME}:${IS_DEV ? 12 : 49}`,
+    PA_TASK_DEFINITION: `${AWS_BASE}:task-definition/${PA_TASK_NAME}:${1}`,
     FARGATE: "FARGATE",
     //TODO: we need to get this subnet dynamically? also why code shall be tied to a subnet.
     SUBNET: IS_DEV ? "subnet-0951d410d348bbd0a" : "subnet-06097477406fea990", 
     ENABLED: "ENABLED",
     QC_CONTAINER_NAME: IS_DEV ? "cellborg_qc_py" : `cellborg-${ENV}-qc_py`,
+    PA_CONTAINER_NAME: `cellborg-${ENV}-pa_py`,
     CELLBORG_ANALYSIS_PY: IS_DEV ? "cellborg_analysis_py" :  `cellborg-${ENV}-analysis_py`,
     SQS_QUEUE_URL: "SQS_QUEUE_URL",
     IP: '0.0.0.0',

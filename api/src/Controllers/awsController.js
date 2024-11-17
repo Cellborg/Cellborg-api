@@ -8,6 +8,9 @@ const {
   ENABLED,
   QC_CONTAINER_NAME,
   SQS_QUEUE_URL,
+  PA_CLUSTER,
+  PA_TASK_DEFINITION,
+  PA_CONTAINER_NAME
 }=require('../constants.js')
 const { ecsClient, sqsClient } = require('../backendClients.js');
 const { ANALYSIS_CLUSTER, ANALYSIS_TASK_DEFINITION, CELLBORG_ANALYSIS_PY } = require("../constants.js");
@@ -91,9 +94,23 @@ async function deleteSQSQueue(queueUrl) {
 
 // type will either be `QC` for quality control task, OR `Analysis` for analysis task
 async function runECSTask(queue, type) {
-  const cluster_name = type == "QC" ? QC_CLUSTER : ANALYSIS_CLUSTER;
-  const task_def = type == "QC" ? QC_TASK_DEFINITION : ANALYSIS_TASK_DEFINITION;
-  const override_name = type == "QC" ? QC_CONTAINER_NAME : CELLBORG_ANALYSIS_PY;
+  var cluster_name;
+  var task_def;
+  var override_name;
+  if(type=="QC"){
+    cluster_name = QC_CLUSTER;
+    task_def = QC_TASK_DEFINITION;
+    override_name = QC_CONTAINER_NAME;
+  }else if(type == "PA"){
+    cluster_name = PA_CLUSTER;
+    task_def = PA_TASK_DEFINITION;
+    override_name = PA_CONTAINER_NAME;
+
+  }else if(type == "Analysis"){
+    cluster_name = ANALYSIS_CLUSTER;
+    task_def = ANALYSIS_TASK_DEFINITION;
+    override_name = CELLBORG_ANALYSIS_PY;
+  }
 
   const params = {
     cluster: cluster_name,
