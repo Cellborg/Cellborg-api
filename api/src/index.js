@@ -169,6 +169,44 @@ app.post('/api/sns_analysis_step', async (req, res) => {
   }
 });
 
+app.post('/api/sns_pa',async(req, res)=>{
+  try{
+    const message = JSON.parse(req.body);
+    
+
+    const user = message.user;
+    const project = message.project;
+    const stage = message.project;
+    
+    if(stage!='cluster'){ //everything but clustering
+      console.log(`${user} request for PA ${stage} in project ${project} has been completed`);
+      console.log(userSocketMap[user])
+
+      if(userSocketMap[user] && stage == "initialized"){
+        console.log("emitting socket for initialized...");
+        userSocketMap[user].emit('PA_Initialize_Project', {user, project, stage});
+      }else if(userSocketMap[user] && stage == "gene_expression"){
+        console.log("emitting socket for gene expression...");
+        userSocketMap[user].emit('PA_Clustering_Complete', {user, project, stage})
+      }
+      else if(userSocketMap[user] && stage == "annotations"){
+        console.log("emitting socket for annotations...");
+        userSocketMap[user].emit('PA_Annotations_Complete', {user, project, stage});
+      }
+
+    }else{ //clustering because need to send back gene list and clusters
+      if(userSocketMap[user] && stage == "cluster"){
+        console.log("emitting socket for clustering...");
+        userSocketMap[user].emit('PA_Clustering_Complete', {user, project, dataset, stage});
+      }
+    }
+    res.sendStatus(200);
+    
+  }catch(error) {
+    console.log("Error: ", error);
+    res.status(500).send('Internal Server Error');
+  }
+})
 app.post('/api/sns', async (req, res) => {
   try {
     const message = req.body;
@@ -187,9 +225,10 @@ app.post('/api/sns', async (req, res) => {
 
       console.log(`${user} request for QC ${stage} complete on dataset: ${dataset} in project ${project}`);
 
+      //***Doing this on frontend now */
       // Update mongo project entry to mark dataset status as "complete"
-      await markDataset(user, project, dataset, stage);
-      console.log("mongo entry updated");
+      //await markDataset(user, project, dataset, stage);
+      //console.log("mongo entry updated"); 
 
       // Send websocket message to frontend to mark dataset status as "complete"
       console.log(userSocketMap);
@@ -201,20 +240,7 @@ app.post('/api/sns', async (req, res) => {
       else if(userSocketMap[user] && stage == "doublet"){
         console.log("emitting socket for doublet...");
         userSocketMap[user].emit('QC_Doublet_Complete', {user, project, dataset, stage});
-      }
-      else if(userSocketMap[user] && stage == "initialized"){
-        console.log("emitting socket for doublet...");
-        userSocketMap[user].emit('QC_Initialize_Project', {user, project, dataset, stage});
-      }
-      else if(userSocketMap[user] && stage == "cluster"){
-        console.log("emitting socket for doublet...");
-        userSocketMap[user].emit('QC_Clustering_Complete', {user, project, dataset, stage});
-      }
-      else if(userSocketMap[user] && stage == "annotations"){
-        console.log("emitting socket for doublet...");
-        userSocketMap[user].emit('QC_Annotations_Complete', {user, project, dataset, stage});
-      }
-      /*else if(userSocketMap[user] && stage == "FinishDoublet"){
+      }/*else if(userSocketMap[user] && stage == "FinishDoublet"){
         console.log("emitting socket connection for finishing QC");
         userSocketMap[user].emit('QC_Complete', {user, project, dataset});
       }*/
