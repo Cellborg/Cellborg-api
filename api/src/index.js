@@ -173,7 +173,7 @@ app.post('/api/sns_pa',async(req, res)=>{
   try{
     const message = JSON.parse(req.body);
     
-
+    print(message)
     const user = message.user;
     const project = message.project;
     const stage = message.project;
