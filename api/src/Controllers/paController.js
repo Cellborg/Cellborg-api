@@ -7,7 +7,7 @@ const KillPAServerRequest = require('../Requests/KillPAServerRequest.js');
 const {PA_CLUSTER, ENVIRONMENT } = require('../constants.js');
 
 const {getSQSQueueUrl, createSQSQueue, deleteSQSQueue,
-    runECSTask, sendSQSMessage } = require('./awsController.js');
+    runECSTask, sendSQSMessage, waitForTaskToRun} = require('./awsController.js');
 
 
 async function prepareProcessing(req, res){

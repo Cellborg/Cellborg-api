@@ -187,7 +187,7 @@ app.post('/api/sns_pa',async(req, res)=>{
         userSocketMap[user].emit('PA_Initialize_Project', {user, project, stage});
       }else if(userSocketMap[user] && stage == "gene_expression"){
         console.log("emitting socket for gene expression...");
-        userSocketMap[user].emit('PA_Clustering_Complete', {user, project, stage})
+        userSocketMap[user].emit('PA_Gene_Expression_Complete', {user, project, stage})
       }
       else if(userSocketMap[user] && stage == "annotations"){
         console.log("emitting socket for annotations...");
