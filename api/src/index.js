@@ -178,27 +178,26 @@ app.post('/api/sns_pa',async(req, res)=>{
     const project = message.project;
     const stage = message.stage;
     
-    if(stage!='cluster'){ //everything but clustering
-      console.log(`${user} request for PA ${stage} in project ${project} has been completed`);
-      console.log(userSocketMap[user])
+    console.log(`${user} request for PA ${stage} in project ${project} has been completed`);
+    console.log(userSocketMap[user])
 
-      if(userSocketMap[user] && stage == "initialized"){
-        console.log("emitting socket for initialized...");  
-        userSocketMap[user].emit('PA_Initialize_Project', {user, project, stage});
-      }else if(userSocketMap[user] && stage == "gene_expression"){
-        console.log("emitting socket for gene expression...");
-        userSocketMap[user].emit('PA_Gene_Expression_Complete', {user, project, stage})
-      }
-      else if(userSocketMap[user] && stage == "annotations"){
-        console.log("emitting socket for annotations...");
-        userSocketMap[user].emit('PA_Annotations_Complete', {user, project, stage});
-      }
+    if(userSocketMap[user] && stage == "initialized"){
+      console.log("emitting socket for initialized...");  
+      userSocketMap[user].emit('PA_Initialize_Project', {user, project, stage});
+    }else if(userSocketMap[user] && stage == "cluster"){
+      const geneNames = message.geneNames;
+      const clusters = message.clusters;
 
-    }else{ //clustering because need to send back gene list and clusters
-      if(userSocketMap[user] && stage == "cluster"){
-        console.log("emitting socket for clustering...");
-        userSocketMap[user].emit('PA_Clustering_Complete', {user, project, dataset, stage});
-      }
+      console.log("emitting socket for clustering...");
+      userSocketMap[user].emit('PA_Clustering_Complete', {user, project, geneNames,clusters, stage});
+      
+    }else if(userSocketMap[user] && stage == "gene_expression"){
+      console.log("emitting socket for gene expression...");
+      userSocketMap[user].emit('PA_Gene_Expression_Complete', {user, project, stage})
+    }
+    else if(userSocketMap[user] && stage == "annotations"){
+      console.log("emitting socket for annotations...");
+      userSocketMap[user].emit('PA_Annotations_Complete', {user, project, stage});
     }
     res.sendStatus(200);
     
