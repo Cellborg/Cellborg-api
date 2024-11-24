@@ -174,6 +174,7 @@ app.post('/api/sns_analysis_step', async (req, res) => {
 
 app.post('/api/sns_pa',async(req, res)=>{
   try{
+    console.log("made it here")
     const message = JSON.parse(req.body);
     
     console.log(message)
