@@ -9,6 +9,9 @@ const jwtMiddleware = require('./Middleware/jwtMiddleware.js');
 const errorHandlerMiddleware = require('./Middleware/errorHandlerMiddleware.js');
 
 const app = express();
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ limit: '1mb', extended: true }));
+
 app.use(compression());
 app.use(cors({ origin: ORIGIN }));
 const server = http.createServer(app);
@@ -190,7 +193,7 @@ app.post('/api/sns_pa',async(req, res)=>{
 
       console.log("emitting socket for clustering...");
       userSocketMap[user].emit('PA_Clustering_Complete', {user, project, geneNames,clusters, stage});
-      
+
     }else if(userSocketMap[user] && stage == "gene_expression"){
       console.log("emitting socket for gene expression...");
       userSocketMap[user].emit('PA_Gene_Expression_Complete', {user, project, stage})
