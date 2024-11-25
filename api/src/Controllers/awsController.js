@@ -133,7 +133,8 @@ async function runECSTask(queue, type) {
           }
         ]
       }]
-    }
+    },
+    startedBy: queue.split('_')[1]
   };
 
   try {
