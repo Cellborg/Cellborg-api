@@ -93,7 +93,7 @@ async function deleteSQSQueue(queueUrl) {
 }
 
 // type will either be `QC` for quality control task, OR `Analysis` for analysis task
-async function runECSTask(queue, type) {
+async function runECSTask(queue, type, user) {
   var cluster_name;
   var task_def;
   var override_name;
@@ -134,7 +134,7 @@ async function runECSTask(queue, type) {
         ]
       }]
     },
-    startedBy: queue.split('_')[1]
+    startedBy: user
   };
 
   try {

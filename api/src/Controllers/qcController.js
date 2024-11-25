@@ -57,7 +57,7 @@ async function beginQualityControl (req, res) {
       console.log("Beginning QC Task from AWS Fargate", qc_sqsUrl);
       console.log("Beginning QC Task from AWS Fargate w/constructed url", qc_sqsUrl_v);
       //start ecs task
-      runECSTask(qc_sqsUrl_v, "QC")
+      runECSTask(qc_sqsUrl_v, "QC", request.user)
       .then((result) => {
         if (result) {
           //call waitfortasktorun here before returning

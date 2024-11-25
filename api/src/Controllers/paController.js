@@ -24,7 +24,7 @@ async function prepareProcessing(req, res){
     var pa_sqsUrl_v = "https://sqs.us-west-2.amazonaws.com/865984939637/"+sqsKey //only for testing
     console.log("Beginning PA Task from AWS Fargate", createSQS);
     console.log("Beginning PA Task from AWS Fargate w/constructed url", pa_sqsUrl_v);
-    runECSTask(pa_sqsUrl_v, "PA")
+    runECSTask(pa_sqsUrl_v, "PA", initProject.user)
     .then((result)=>{
       if (result) {
         return res.status(200).json({ taskArn: result });
