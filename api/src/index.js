@@ -221,9 +221,9 @@ app.post('/api/sns', async (req, res) => {
 
     if (messageBody.complete === true) {
       const user = messageBody.user;
-      const project = messageBody.project;
-      const dataset = messageBody.dataset;
       const stage = messageBody.stage;
+      const project = messageBody.project || none;
+      const dataset = messageBody.dataset || none;
 
       console.log(`${user} request for QC ${stage} complete on dataset: ${dataset} in project ${project}`);
 
@@ -235,7 +235,11 @@ app.post('/api/sns', async (req, res) => {
       // Send websocket message to frontend to mark dataset status as "complete"
       console.log(userSocketMap);
       console.log(userSocketMap[user]);
-      if (userSocketMap[user] && stage == "prePlot") {
+      if(userSocketMap[user] && stage == "running"){
+        console.log("emitting socket for task running...");
+        console.log("RECIEVED NOTIFICATION")
+        userSocketMap[user].emit('QC_Running', {user,stage});
+      }else if (userSocketMap[user] && stage == "prePlot") {
         console.log("emitting socket for pre-plot...");
         userSocketMap[user].emit('QC_Pre_Plot_Complete', { user, project, dataset, stage});
       }
