@@ -259,8 +259,9 @@ app.post('/api/sns', async (req, res) => {
 app.post('/api/sns_running', async (req, res) =>{
   try{
     const message = req.body;
-    const user = message.user;
-    const stage = message.stage;
+    const parsedMessage = JSON.parse(message);  
+    const user = parsedMessage.user;
+    const stage = parsedMessage.stage;
 
     console.log(message);
     console.log(user);
