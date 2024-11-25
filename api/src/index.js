@@ -262,6 +262,10 @@ app.post('/api/sns_running', async (req, res) =>{
     const user = message.user;
     const stage = message.stage;
 
+    console.log(message);
+    console.log(user);
+    console.log(stage);
+
     if(userSocketMap[user] && stage == "qc"){
       console.log("emitting socket for qc task started");
       userSocketMap[user].emit('QC_Running', {user, stage});
