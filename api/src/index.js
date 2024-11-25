@@ -222,16 +222,6 @@ app.post('/api/sns', async (req, res) => {
     if (messageBody.complete === true) {
       const user = messageBody.user;
       const stage = messageBody.stage;
-
-      //if notification is for task running
-      if(userSocketMap[user] && stage == "running"){
-        console.log("emitting socket for task running...");
-        console.log("RECIEVED NOTIFICATION")
-        userSocketMap[user].emit('QC_Running', {user,stage});
-        res.sendStatus(200);
-      }
-    
-      //beyond running are the task functions
       const project = messageBody.project;
       const dataset = messageBody.dataset;
 
@@ -265,6 +255,17 @@ app.post('/api/sns', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+app.post('/api/sns_running', async (req, res) =>{
+  try{
+    const message = req.body;
+    console.log(message);
+    
+  }catch(error){
+    console.log("Error: ", error);
+    res.status(500).send('Internal Server Error');
+  }
+})
 
 server.listen(PORT, IP, () => {
   console.log(`Cellborg API listening at ${SERVER} in the ${envvv} environment`);
