@@ -259,8 +259,17 @@ app.post('/api/sns', async (req, res) => {
 app.post('/api/sns_running', async (req, res) =>{
   try{
     const message = req.body;
-    console.log(message);
-    
+    const user = message.user;
+    const stage = message.stage;
+
+    if(userSocketMap[user] && stage == "qc"){
+      console.log("emitting socket for qc task started");
+      userSocketMap[user].emit('QC_Running', {user, stage});
+    }else if(userSocketMap[user] && stage == "pa"){
+      console.log("emitting socket for pa task started");
+      userSocketMap[user].emit('PA_Running', {user, stage});
+    }
+    res.sendStatus(200);
   }catch(error){
     console.log("Error: ", error);
     res.status(500).send('Internal Server Error');
