@@ -188,11 +188,10 @@ app.post('/api/sns_pa',async(req, res)=>{
       console.log("emitting socket for initialized...");  
       userSocketMap[user].emit('PA_Initialize_Project', {user, project, stage});
     }else if(userSocketMap[user] && stage == "cluster"){
-      const geneNames = message.geneNames;
       const clusters = message.clusters;
 
       console.log("emitting socket for clustering...");
-      userSocketMap[user].emit('PA_Clustering_Complete', {user, project, geneNames,clusters, stage});
+      userSocketMap[user].emit('PA_Clustering_Complete', {user, project, clusters, stage});
 
     }else if(userSocketMap[user] && stage == "gene_expression"){
       console.log("emitting socket for gene expression...");
