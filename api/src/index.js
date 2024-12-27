@@ -9,6 +9,7 @@ const jwtMiddleware = require('./Middleware/jwtMiddleware.js');
 const errorHandlerMiddleware = require('./Middleware/errorHandlerMiddleware.js');
 
 const app = express();
+
 app.use(compression());
 app.use(cors({ origin: ORIGIN }));
 const server = http.createServer(app);
@@ -25,9 +26,10 @@ var s3_dataset_prefix = "";
 let userSocketMap = {};
 let analysisSocketMap = {};
 app.use(compression());
-app.use(express.urlencoded());
-app.use(express.json());
-app.use(express.text());
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ limit: '1mb', extended: true }));
+app.use(express.text({ limit: '1mb' }));
+app.use(compression());
 
 app.use(errorHandlerMiddleware);
 
@@ -35,6 +37,7 @@ app.use(errorHandlerMiddleware);
 app.use('/api/project', jwtMiddleware, require('./Routes/projectRoutes'));
 app.use('/api/user', jwtMiddleware, require('./Routes/userRoutes.js'));
 app.use('/api/qc', jwtMiddleware, require('./Routes/qcRoutes.js'));
+app.use('/api/pa', jwtMiddleware, require('./Routes/paRoutes.js'));
 app.use('/api/analysis', jwtMiddleware, require('./Routes/analysisRoutes.js'));
 app.use('/api/bug',jwtMiddleware,require('./Routes/bugRoutes.js'));
 /* all other routes below no need for auth middleware*/
@@ -168,6 +171,43 @@ app.post('/api/sns_analysis_step', async (req, res) => {
   }
 });
 
+app.post('/api/sns_pa',async(req, res)=>{
+  try{
+    console.log("made it here")
+    const message = JSON.parse(req.body);
+    
+    console.log(message)
+    const user = message.user;
+    const project = message.project;
+    const stage = message.stage;
+    
+    console.log(`${user} request for PA ${stage} in project ${project} has been completed`);
+    console.log(userSocketMap[user])
+
+    if(userSocketMap[user] && stage == "initialized"){
+      console.log("emitting socket for initialized...");  
+      userSocketMap[user].emit('PA_Initialize_Project', {user, project, stage});
+    }else if(userSocketMap[user] && stage == "cluster"){
+      const clusters = message.clusters;
+
+      console.log("emitting socket for clustering...");
+      userSocketMap[user].emit('PA_Clustering_Complete', {user, project, clusters, stage});
+
+    }else if(userSocketMap[user] && stage == "gene_expression"){
+      console.log("emitting socket for gene expression...");
+      userSocketMap[user].emit('PA_Gene_Expression_Complete', {user, project, stage})
+    }
+    else if(userSocketMap[user] && stage == "annotations"){
+      console.log("emitting socket for annotations...");
+      userSocketMap[user].emit('PA_Annotations_Complete', {user, project, stage});
+    }
+    res.sendStatus(200);
+    
+  }catch(error) {
+    console.log("Error: ", error);
+    res.status(500).send('Internal Server Error');
+  }
+})
 app.post('/api/sns', async (req, res) => {
   try {
     const message = req.body;
@@ -180,15 +220,16 @@ app.post('/api/sns', async (req, res) => {
 
     if (messageBody.complete === true) {
       const user = messageBody.user;
+      const stage = messageBody.stage;
       const project = messageBody.project;
       const dataset = messageBody.dataset;
-      const stage = messageBody.stage;
 
       console.log(`${user} request for QC ${stage} complete on dataset: ${dataset} in project ${project}`);
 
+      //***Doing this on frontend now */
       // Update mongo project entry to mark dataset status as "complete"
-      await markDataset(user, project, dataset, stage);
-      console.log("mongo entry updated");
+      //await markDataset(user, project, dataset, stage);
+      //console.log("mongo entry updated"); 
 
       // Send websocket message to frontend to mark dataset status as "complete"
       console.log(userSocketMap);
@@ -200,24 +241,7 @@ app.post('/api/sns', async (req, res) => {
       else if(userSocketMap[user] && stage == "doublet"){
         console.log("emitting socket for doublet...");
         userSocketMap[user].emit('QC_Doublet_Complete', {user, project, dataset, stage});
-      }
-      else if(userSocketMap[user] && stage == "initialized"){
-        console.log("emitting socket for doublet...");
-        userSocketMap[user].emit('QC_Initialize_Project', {user, project, dataset, stage});
-      }
-      else if(userSocketMap[user] && stage == "cluster"){
-        console.log("emitting socket for doublet...");
-        userSocketMap[user].emit('QC_Clustering_Complete', {user, project, dataset, stage});
-      }
-      else if(userSocketMap[user] && stage == "annotations"){
-        console.log("emitting socket for doublet...");
-        userSocketMap[user].emit('QC_Annotations_Complete', {user, project, dataset, stage});
-      }
-      else if(userSocketMap[user] && stage == "doublet"){
-        console.log("emitting socket for doublet...");
-        userSocketMap[user].emit('QC_Doublet_Complete', {user, project, dataset, stage});
-      }
-      /*else if(userSocketMap[user] && stage == "FinishDoublet"){
+      }/*else if(userSocketMap[user] && stage == "FinishDoublet"){
         console.log("emitting socket connection for finishing QC");
         userSocketMap[user].emit('QC_Complete', {user, project, dataset});
       }*/
@@ -230,6 +254,31 @@ app.post('/api/sns', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+app.post('/api/sns_running', async (req, res) =>{
+  try{
+    const message = req.body;
+    const parsedMessage = JSON.parse(message);  
+    const user = parsedMessage.user;
+    const stage = parsedMessage.stage;
+
+    console.log(message);
+    console.log(user);
+    console.log(stage);
+
+    if(userSocketMap[user] && stage == "qc"){
+      console.log("emitting socket for qc task started");
+      userSocketMap[user].emit('QC_Running', {user, stage});
+    }else if(userSocketMap[user] && stage == "pa"){
+      console.log("emitting socket for pa task started");
+      userSocketMap[user].emit('PA_Running', {user, stage});
+    }
+    res.sendStatus(200);
+  }catch(error){
+    console.log("Error: ", error);
+    res.status(500).send('Internal Server Error');
+  }
+})
 
 server.listen(PORT, IP, () => {
   console.log(`Cellborg API listening at ${SERVER} in the ${envvv} environment`);

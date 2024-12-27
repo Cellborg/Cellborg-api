@@ -12,6 +12,7 @@ const RequestTypes = {
   PSUEDOTIME: "psuedotime",
   DOTPLOT: "dotplot",
   VLNPLOTS: "vlnplots",
+  GENEEXPRESSION: "gene_expression",
   ANNOTATIONS: "annotations",
   FIND_MARKERS: "findMarkers",
   ALL_MARKERS: "allMarkers",
