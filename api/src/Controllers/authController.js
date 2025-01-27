@@ -45,6 +45,28 @@ async function login (request, response) {
         });
     }
   }
+
+async function google (request, response) {
+  console.log('request to login using google');
+  const {email, name, googleId} = request.body;
+
+  const data = await mongoClient.db(`Cellborg-${ENVIRONMENT}`).collection('Userdata').findOne({'email':email});
+  if(data==null){
+    response.status(401).json({
+      success:false,
+      error: 'User not found'
+    })
+  }
+  else{
+    const user = {
+      id: 'admin',
+      email: email,
+      user_id:data.user_id
+    };
+    response.status(200).json(user);
+  }
+
+}
   
   const authenticateUser = async (email, password) => {
       console.log("Authenticating user: ", email)
@@ -55,4 +77,6 @@ async function login (request, response) {
       return {valid:true, user_id:data.user_id};
   };
 
-module.exports = { signup, login };
+
+
+module.exports = { signup, login, google };
