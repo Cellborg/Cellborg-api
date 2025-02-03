@@ -19,7 +19,7 @@ const SERVER = IS_DEV ? `http://localhost:${PORT}` : `${ENV}.api.cellborg.bio`;
 
 module.exports = {
     // AWS Constants
-    US_WEST_2: 'us-west-2',
+    US_EAST_1: 'us-east-1',
     QC_CLUSTER: `${AWS_BASE}:cluster/${CLUSTER_NAME}`,
     PA_CLUSTER: `${AWS_BASE}:cluster/${PA_CLUSER_NAME}`,
     ANALYSIS_CLUSTER: `${AWS_BASE}:cluster/${ANALYSIS_CLUSTER_NAME}`,
