@@ -21,7 +21,7 @@ async function prepareProcessing(req, res){
     }
     console.log("Creating queue")
     const createSQS = createSQSQueue(sqsKey);
-    var pa_sqsUrl_v = "https://sqs.us-west-2.amazonaws.com/536697236385/"+sqsKey //only for testing
+    var pa_sqsUrl_v = "https://sqs.us-east-1.amazonaws.com/536697236385/"+sqsKey //only for testing
     console.log("Beginning PA Task from AWS Fargate", createSQS);
     console.log("Beginning PA Task from AWS Fargate w/constructed url", pa_sqsUrl_v);
     runECSTask(pa_sqsUrl_v, "PA", initProject.user)

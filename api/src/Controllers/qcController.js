@@ -53,7 +53,7 @@ async function beginQualityControl (req, res) {
       }
       //create sqsqueue
       const qc_sqsUrl = createSQSQueue(sqsKey);
-      var qc_sqsUrl_v = "https://sqs.us-west-2.amazonaws.com/536697236385/"+sqsKey //only for testing
+      var qc_sqsUrl_v = "https://sqs.us-east-1.amazonaws.com/536697236385/"+sqsKey //only for testing
       console.log("Beginning QC Task from AWS Fargate", qc_sqsUrl);
       console.log("Beginning QC Task from AWS Fargate w/constructed url", qc_sqsUrl_v);
       //start ecs task
